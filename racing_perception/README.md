@@ -1,158 +1,151 @@
-Adaptive Corridor-Aware Speed & Steering Control (ROS2 Humble)
+Okay Nila — here is the **correct README content** you should paste.
 
-A full perception → behavior → control pipeline for autonomous racing simulation.
+Since your file is already open in `nano`, do this:
 
-🚀 Overview
+👉 **Copy EVERYTHING below**
+👉 Paste it into your empty README.md
+👉 Then tell me **“pasted”** and I will tell you how to save + push it.
 
-This project implements a complete LiDAR-based autonomy pipeline using ROS2 Humble:
+---
 
-Fake LiDAR → publishes synthetic /scan data
+# 📄 **PASTE THIS INTO README.md**
 
-Perception Node → estimates corridor width, detects obstacles, assigns risk (SAFE/NARROW/CRITICAL)
+```
+# Adaptive Corridor-Aware Racing (ROS2 Humble)
 
-Behavior Planner → selects CRUISE / SHIFT_LEFT / SHIFT_RIGHT / STOP
+A complete **perception → behavior → control** pipeline for a simplified autonomous racing scenario using **ROS2 Humble**.  
+This project shows how a robot can use LiDAR to estimate free corridor space, classify risk (SAFE / NARROW / CRITICAL), select behavior, and generate smooth speed + steering commands.
 
-Steering Controller → generates angular steering commands
+---
 
-Speed Controller → computes forward velocity
+## 🚀 Features
 
-Logger Node → records all data to CSV
+### 🟢 Fake LiDAR Node
+- Publishes `/scan` with changing corridor widths.
+- Simulates SAFE → NARROW → CRITICAL transitions.
 
-Analysis Module → plots performance graphs
-
-This setup demonstrates core concepts used in racing autonomy, navigation, and robot behaviour planning, making it ideal for learning and project applications.
-
-🛠 ROS2 Nodes
-1️⃣ fake_lidar_node
-
-Publishes synthetic LaserScan messages
-
-Corridor width changes over time
-
-Simulates SAFE → NARROW → CRITICAL transitions
-
-2️⃣ racing_perception_node
-
-Subscribes to /scan
-
+### 🔵 Perception Node (`racing_perception_node`)
 Computes:
-
-front obstacle distance
-
-left & right free space
-
-corridor width
-
-risk level
-
-recommended speed
-
-steering (-1 left, +1 right)
-
-high-level behavior
+- front obstacle distance  
+- left & right free space  
+- corridor width  
+- risk level (SAFE / NARROW / CRITICAL)  
+- steering command (−1 left, +1 right)  
+- recommended safe speed  
 
 Publishes:
+- `/racing/corridor_width`
+- `/racing/risk_level`
+- `/racing/safe_speed`
+- `/racing/steering_cmd`
+- `/racing/behavior`
 
-/racing/corridor_width
-/racing/risk_level
-/racing/safe_speed
-/racing/steering_cmd
-/racing/behavior
+### 🔴 Speed Controller Node (`speed_controller_node`)
+- Converts safe speed + steering into actual `/cmd_vel`
+- Smooth acceleration and deceleration
+- Publishes state: STOP / SLOW / CRUISE
 
-3️⃣ speed_controller_node
+### 🟡 Data Logger Node
+Logs:
+- corridor width  
+- risk level  
+- safe speed  
+- steering  
+- behavior  
+- cmd_vel  
 
-Converts recommended speed + steering into /cmd_vel
+Saves data as CSV for analysis.
 
-Smooth acceleration/deceleration
+### 🧪 Analysis Script (`analysis/plot_logs.py`)
+Automatically generates:
+- `corridor_width.png`
+- `safe_speed.png`
+- `steering_cmd.png`
+- `linear_speed.png`
+- `angular_speed.png`
 
-Labels CRUISE / SLOW / STOP states
+---
 
-4️⃣ data_logger_node
+## 🏗 System Architecture
 
-Logs all system outputs automatically to CSV
+```
 
-Used for analysis & graphs
+Fake LiDAR (/scan)
+↓
+Perception → corridor, risk, steering, safe_speed, behavior
+↓
+Speed Controller → /cmd_vel
+↓
+Robot / Simulation
 
-5️⃣ Analysis (Python script)
+```
 
-Reads CSV logs
+Logger subscribes to everything and creates CSV logs.
 
-Generates plots:
+---
 
-Corridor width
+## 📦 Package Structure
 
-Speed profile
+```
 
-Steering
+racing_perception/
+├── README.md
+├── package.xml
+├── setup.py
+├── launch/
+│   └── racing_perception_launch.py
+├── racing_perception/
+│   ├── **init**.py
+│   ├── fake_lidar_node.py
+│   ├── perception_node.py
+│   ├── speed_controller_node.py
+│   └── data_logger_node.py
+└── analysis/
+├── plot_logs.py
+├── corridor_width.png
+├── safe_speed.png
+├── steering_cmd.png
+├── linear_speed.png
+└── angular_speed.png
 
-Control signals
+````
 
-📊 Results
-SAFE Zone
+---
 
-Corridor ≈ 10 m
+## ▶️ How to Run
 
-Behavior: CRUISE
-
-Steering: 0
-
-Speed ≈ 0.6 → 1.2 m/s
-
-NARROW Zone
-
-Corridor ≈ 2 m
-
-Behavior: SHIFT_LEFT / SHIFT_RIGHT
-
-Steering: ±1
-
-Speed: Moderate
-
-CRITICAL Zone
-
-Corridor ≈ 0.8 m
-
-Behavior: STOP
-
-Steering: 0
-
-Speed ≈ 0
-
-📈 Graphs
-
-(place your .png images here once uploaded to GitHub)
-
-▶️ How to Run
-Build:
+### Build:
+```bash
 cd ~/ros2_ws
 colcon build
 source install/setup.bash
+````
 
-Launch full system:
+### Launch everything:
+
+```bash
 ros2 launch racing_perception racing_perception_launch.py
+```
 
-Check topics:
-ros2 topic list
+---
 
-View logs:
+## 📊 Log File Location
 
-Located in:
-
+```
 ros2_ws/install/racing_perception/lib/python3.10/site-packages/racing_perception/logs/
+```
 
-📦 Folder Structure
-racing_perception/
- ├── racing_perception/
- │    ├── perception_node.py
- │    ├── speed_controller_node.py
- │    ├── fake_lidar_node.py
- │    ├── data_logger_node.py
- │    └── __init__.py
- ├── analysis/
- │    ├── plot_logs.py
- │    └── *.png
- ├── launch/
- │    └── racing_perception_launch.py
- ├── package.xml
- ├── setup.py
- └── README.md
+---
+
+## 🎯 Relevance to RoboRacer / Autonomous Racing
+
+* Demonstrates a **ROS2 racing pipeline**: perception → decision → control
+* Implements **risk-aware corridor estimation**
+* Includes behavior planning (CRUISE, SHIFT_LEFT, SHIFT_RIGHT, STOP)
+* Full **logging + analysis** system for evaluating robot performance
+
+This project shows strong understanding of **autonomy fundamentals**, making it suitable as a portfolio project for robotics, autonomous driving, and RoboRacer applications.
+
+```
+
+---
