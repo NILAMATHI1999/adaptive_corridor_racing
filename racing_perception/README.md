@@ -1,39 +1,27 @@
-Okay Nila — here is the **correct README content** you should paste.
-
-Since your file is already open in `nano`, do this:
-
-👉 **Copy EVERYTHING below**
-👉 Paste it into your empty README.md
-👉 Then tell me **“pasted”** and I will tell you how to save + push it.
-
----
-
-# 📄 **PASTE THIS INTO README.md**
-
-```
 # Adaptive Corridor-Aware Racing (ROS2 Humble)
 
 A complete **perception → behavior → control** pipeline for a simplified autonomous racing scenario using **ROS2 Humble**.  
-This project shows how a robot can use LiDAR to estimate free corridor space, classify risk (SAFE / NARROW / CRITICAL), select behavior, and generate smooth speed + steering commands.
+The robot uses simulated LiDAR to estimate corridor width, classify driving risk, decide behaviour, and generate safe speed & steering commands.
 
 ---
 
 ## 🚀 Features
 
 ### 🟢 Fake LiDAR Node
-- Publishes `/scan` with changing corridor widths.
-- Simulates SAFE → NARROW → CRITICAL transitions.
+- Publishes `/scan` with varying corridor widths  
+- Simulates transitions: **SAFE → NARROW → CRITICAL**
 
 ### 🔵 Perception Node (`racing_perception_node`)
 Computes:
-- front obstacle distance  
+- front distance  
 - left & right free space  
 - corridor width  
 - risk level (SAFE / NARROW / CRITICAL)  
 - steering command (−1 left, +1 right)  
 - recommended safe speed  
+- behaviour: CRUISE / SHIFT_LEFT / SHIFT_RIGHT / STOP
 
-Publishes:
+Publishes topics:
 - `/racing/corridor_width`
 - `/racing/risk_level`
 - `/racing/safe_speed`
@@ -41,23 +29,23 @@ Publishes:
 - `/racing/behavior`
 
 ### 🔴 Speed Controller Node (`speed_controller_node`)
-- Converts safe speed + steering into actual `/cmd_vel`
-- Smooth acceleration and deceleration
-- Publishes state: STOP / SLOW / CRUISE
+- Converts safe speed + steering into `/cmd_vel`
+- Smooth acceleration/deceleration
+- Behaviour-based output (STOP / SLOW / CRUISE)
 
 ### 🟡 Data Logger Node
 Logs:
 - corridor width  
 - risk level  
-- safe speed  
+- behaviour  
 - steering  
-- behavior  
-- cmd_vel  
+- safe speed  
+- final `/cmd_vel` (linear & angular)
 
-Saves data as CSV for analysis.
+Saves logs as CSV files for analysis.
 
-### 🧪 Analysis Script (`analysis/plot_logs.py`)
-Automatically generates:
+### 🧪 Analysis Tools (`analysis/`)
+Generates automatic plots:
 - `corridor_width.png`
 - `safe_speed.png`
 - `steering_cmd.png`
@@ -72,19 +60,21 @@ Automatically generates:
 
 Fake LiDAR (/scan)
 ↓
-Perception → corridor, risk, steering, safe_speed, behavior
+Perception Node
+↓   (corridor width, risk, speed, steering, behaviour)
+Speed Controller Node
 ↓
-Speed Controller → /cmd_vel
+/cmd_vel
 ↓
 Robot / Simulation
 
 ```
 
-Logger subscribes to everything and creates CSV logs.
+Logger subscribes to all topics and records results.
 
 ---
 
-## 📦 Package Structure
+## 📦 Project Structure
 
 ```
 
@@ -114,14 +104,14 @@ racing_perception/
 
 ## ▶️ How to Run
 
-### Build:
+### 1. Build the workspace
 ```bash
 cd ~/ros2_ws
 colcon build
 source install/setup.bash
 ````
 
-### Launch everything:
+### 2. Launch the full system
 
 ```bash
 ros2 launch racing_perception racing_perception_launch.py
@@ -131,21 +121,22 @@ ros2 launch racing_perception racing_perception_launch.py
 
 ## 📊 Log File Location
 
+CSV logs are saved in:
+
 ```
 ros2_ws/install/racing_perception/lib/python3.10/site-packages/racing_perception/logs/
 ```
 
 ---
 
-## 🎯 Relevance to RoboRacer / Autonomous Racing
+## 🎯 Why this project is relevant
 
-* Demonstrates a **ROS2 racing pipeline**: perception → decision → control
-* Implements **risk-aware corridor estimation**
-* Includes behavior planning (CRUISE, SHIFT_LEFT, SHIFT_RIGHT, STOP)
-* Full **logging + analysis** system for evaluating robot performance
+This project demonstrates:
 
-This project shows strong understanding of **autonomy fundamentals**, making it suitable as a portfolio project for robotics, autonomous driving, and RoboRacer applications.
+* corridor-based risk estimation
+* autonomous racing behaviour selection
+* real-time ROS2 control
+* logging + offline evaluation
+* clean modular design for racing/autonomy tasks
 
-```
-
----
+A strong portfolio project for **Autonomous Vehicles / Robotics / RoboRacer** positions.
